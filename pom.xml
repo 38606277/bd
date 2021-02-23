@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.cmbn</groupId>
+	<artifactId>reportServer</artifactId>
+	<version>2.3.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>${project.artifactId}</name>
+	<description>A distributed task scheduling framework.</description>
+
+	<modules>
+		<module>report-server</module>
+		<module>report-job-core</module>
+		<module>report-job-admin</module>
+		<module>datax-admin</module>
+		<module>datax-core</module>
+		<module>datax-executor</module>
+		<module>datax-rpc</module>
+		<module>datax-assembly</module>
+    </modules>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.test.skip>true</maven.test.skip>
+
+		<netty-all.version>4.1.54.Final</netty-all.version>
+		<gson.version>2.8.6</gson.version>
+
+		<spring.version>5.3.1</spring.version>
+		<spring-boot.version>2.2.1.RELEASE</spring-boot.version>
+
+		<mybatis-spring-boot-starter.version>2.1.4</mybatis-spring-boot-starter.version>
+		<mysql-connector-java.version>8.0.22</mysql-connector-java.version>
+
+		<slf4j-api.version>1.7.30</slf4j-api.version>
+		<junit.version>5.7.0</junit.version>
+		<javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+
+		<groovy.version>3.0.7</groovy.version>
+
+		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+		<maven-war-plugin.version>3.3.1</maven-war-plugin.version>
+
+		<!-- mybatis版本号 -->
+		<mybatis.version>3.4.1</mybatis.version>
+		<!-- log4j日志文件管理包版本 -->
+		<log4j.version>1.2.17</log4j.version>
+
+		<java.version>1.8</java.version>
+		<hive.version>1.1.0-cdh5.13.3</hive.version>
+
+
+		<commons-lang3.version>3.3.2</commons-lang3.version>
+		<fastjson.version>1.2.70</fastjson.version>
+		<logback-classic.version>1.2.2</logback-classic.version>
+		<commons-io.version>2.4</commons-io.version>
+		<hutool.version>4.5.1</hutool.version>
+		<postgresql.version>42.2.5</postgresql.version>
+		<mysql-connector.version>8.0.22</mysql-connector.version>
+		<jna.version>4.1.0</jna.version>
+
+		<mybatisplus.version>3.3.1</mybatisplus.version>
+		<swagger.version>2.9.2</swagger.version>
+		<swagger-models.version>1.5.21</swagger-models.version>
+
+		<swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
+		<jjwt.version>0.9.0</jjwt.version>
+		<netty.version>4.1.54.Final</netty.version>
+		<hessian.version>4.0.63</hessian.version>
+		<hadoop.version>2.7.3</hadoop.version>
+		<hive.jdbc.version>2.1.0</hive.jdbc.version>
+
+		<hbase.version>1.3.0</hbase.version>
+		<mongo-java-driver.version>3.4.2</mongo-java-driver.version>
+		<oshi.core.version>3.5.0</oshi.core.version>
+
+		<phoenix.version>5.0.0-HBase-2.0</phoenix.version>
+	</properties>
+
+
+</project>

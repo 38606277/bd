@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dataStandard">
+
+	<!--  创建func_dict信息  -->
+	<insert id="createStandard" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into bd_data_standard(standard_id,standard_name,standard_code,standard_type,status,catalog_id,description,create_date,create_by)
+		values ('${standard_id}','${standard_name}','${standard_code}',
+		<if  test="standard_type == null or standard_type == ''">NULL</if>
+		<if  test="standard_type != null and standard_type != ''">#{standard_type}</if>,
+		<if  test="status == null or status == ''">0</if>
+		<if  test="status != null and status != ''">#{status}</if>,
+		<if  test="catalog_id == null">NULL</if>
+		<if  test="catalog_id != null">'${catalog_id}'</if>,
+		'${description}',sysdate(),
+		<if  test="create_by == null or create_by == ''">NULL</if>
+		<if  test="create_by != null and create_by != ''">#{create_by}</if>
+		)
+	</insert>
+	<!-- 修改 func_dict 表的信息 -->
+	<update id="updateStandard" parameterType="Map">
+		update bd_data_standard set standard_name='${standard_name}',
+		standard_type=
+		<if  test="standard_type == null or standard_type ==''">NULL</if>
+		<if  test="standard_type != null and standard_type != ''">#{standard_type}</if>
+		,status=
+		<if  test="status == null or status ==''">NULL</if>
+		<if  test="status != null and status != ''">#{status}</if>
+		,description=
+		<if  test="description == null">NULL</if>
+		<if  test="description != null">'${description}'</if>
+		where standard_id=#{standard_id}
+	</update>
+
+	<select id="getDataStandardById" parameterType="java.lang.String" resultType="map">
+        SELECT u.* FROM bd_data_standard u where u.standard_id = #{standard_id}
+    </select>
+
+	<select id="countStandardByCatalogId" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from bd_data_standard where catalog_id=#{catalog_id};
+	</select>
+
+
+	<select id="getStandardByPId" parameterType="java.lang.String" resultType="map">
+        SELECT u.* FROM bd_data_standard u where u.catalog_id = #{catalog_id}
+    </select>
+
+	<select id="lastOne" resultType="java.lang.String">
+		select standard_code from bd_data_standard order by CONVERT(standard_id,SIGNED) desc limit 0,1
+	</select>
+
+    <select id="getListPage" resultType="Map" parameterType="Map">
+        SELECT u.*  FROM bd_data_standard u  where  1=1
+		<if  test="standard_name != null and standard_name!='' ">
+			and  u.standard_name like '%${standard_name}%'
+		</if>
+		<if  test="catalog_id != null and catalog_id!='' ">
+			and  u.catalog_id ='${catalog_id}'
+		</if>
+		<if  test="standard_code != null and standard_code!='' ">
+			and  u.standard_code  like '%${standard_code}%'
+		</if>
+    </select>
+
+	<select id="getMaxId" resultType="java.lang.Integer">
+        SELECT (MAX(CONVERT(standard_id,SIGNED) +1)) as standard_id from bd_data_standard
+    </select>
+
+	<!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
+	<delete id="deleteDataStandardByID" parameterType="Map">
+        delete from bd_data_standard where standard_id=#{standard_id}
+    </delete>
+
+
+
+
+	<!--  创建func_dict信息  -->
+	<insert id="createCatalog" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into bd_data_standard_catalog(catalog_id,catalog_name,catalog_pid,status)
+		values ('${catalog_id}','${catalog_name}','${catalog_pid}',
+		<if  test="status == null or status == ''">NULL</if>
+		<if  test="status != null and status != ''">#{status}</if>
+		)
+	</insert>
+	<!-- 修改 func_dict 表的信息 -->
+	<update id="updateCatalog" parameterType="Map">
+		update bd_data_standard_catalog set catalog_name='${catalog_name}',catalog_pid='${catalog_pid}',
+		status=
+		<if  test="status == null or status ==''">NULL</if>
+		<if  test="status != null and status != ''">#{status}</if>
+		where catalog_id=#{catalog_id}
+	</update>
+
+	<select id="getCatalogMaxId" resultType="java.lang.Integer">
+        SELECT (MAX(CONVERT(catalog_id,SIGNED) +1)) as catalog_id from bd_data_standard_catalog
+    </select>
+
+	<select id="count" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from bd_data_standard_catalog where `catalog_name` ='${catalog_name}'
+		<if  test="catalog_id != null and catalog_id !=''">
+			and catalog_id!='${catalog_id}'
+		</if>
+	</select>
+
+	<select id="countCatalogByPid" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from bd_data_standard_catalog where catalog_pid=#{catalog_id};
+	</select>
+
+	<select id="getCatalogByPid" parameterType="map" resultType="map">
+		select catalog_id,catalog_id as 'key',catalog_name as 'title', catalog_pid from bd_data_standard_catalog where catalog_pid=#{catalog_pid};
+	</select>
+
+	<delete id="deleteCatalogById" parameterType="java.lang.String">
+		delete from bd_data_standard_catalog where catalog_id=#{catalog_id}
+	</delete>
+</mapper>

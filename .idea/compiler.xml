@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="datax-core" />
+        <module name="datax-admin" />
+        <module name="report-job-core" />
+        <module name="datax-assembly" />
+        <module name="report-server" />
+        <module name="datax-rpc" />
+        <module name="report-job-admin" />
+        <module name="datax-executor" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="datax-admin" target="1.8" />
+      <module name="datax-assembly" target="1.8" />
+      <module name="datax-core" target="1.8" />
+      <module name="datax-executor" target="1.8" />
+      <module name="datax-rpc" target="1.8" />
+      <module name="report-job-admin" target="1.8" />
+      <module name="report-job-core" target="1.8" />
+      <module name="report-server" target="1.8" />
+      <module name="reportServer" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="report-server" options="-extdirs D:\project\reportServer\report-server/lib" />
+    </option>
+  </component>
+</project>
