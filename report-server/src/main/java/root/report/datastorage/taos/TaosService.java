@@ -162,6 +162,51 @@ public class TaosService {
         return tableNameList;
     }
 
+    public static List<Map> getColumnNames(String fromdb,String tableName) {
+        List<Map> columnNames = new ArrayList<>();
+        //与数据库的连接
+        Connection conn = DbFactory.Open(fromdb).getConnection();
+        PreparedStatement   pStemt = null;
+        String tableSql = "SELECT * FROM "  + tableName;
+        try {
+            pStemt = conn.prepareStatement(tableSql);
+            //结果集元数据
+            ResultSet rs= pStemt.executeQuery();
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //表列数
+            int size = rsmd.getColumnCount();
+            for (int i = 1; i <= size; i++) {
+                Map map=new HashMap();
+                map.put("COLUMN_NAME",rsmd.getColumnName(i));
+                map.put("TYPE_NAME",rsmd.getColumnTypeName(i));
+                map.put("REMARKS","");
+                map.put("IS_NULLABLE","");
+                map.put("COLUMN_SIZE",rsmd.getColumnDisplaySize(i));
+                map.put("DECIMAL_DIGITS",rsmd.getPrecision(i));
+
+                System.out.println(rsmd.getColumnName(i));
+                System.out.println(rsmd.getColumnType(i));
+                System.out.println(rsmd.getColumnTypeName(i));
+                System.out.println(rsmd.getColumnDisplaySize(i));
+                System.out.println(rsmd.getPrecision(i));
+                System.out.println("----------------------------------");
+                columnNames.add(map);
+            }
+        } catch (SQLException e) {
+            log.error("getColumnNames failure", e);
+        } finally {
+            if (pStemt != null) {
+                try {
+                    pStemt.close();
+                } catch (SQLException e) {
+                    log.error("getColumnNames close pstem and connection failure", e);
+                }
+            }
+        }
+        return columnNames;
+    }
+
     public Map getTableCloumnList(JSONObject pJson)  {
         List<Map> list =new ArrayList<>();
         List<Map> columnList = new ArrayList<>();
@@ -170,12 +215,15 @@ public class TaosService {
             String dbType = pJson.getString("dbType");
             String tablename = pJson.getString("table_name");
             String dbname = pJson.getString("host_id");
-            DatabaseMetaData databaseMetaData = DbFactory.Open(dbname).getConnection().getMetaData();
-            //获取所有表
-            ResultSet rs = databaseMetaData.getColumns(null, "%", tablename, "%");
-            list = convertList(rs);
-            rs.close();
-
+            if(dbType.equalsIgnoreCase("taos")) {
+                list = getColumnNames(dbname, tablename);
+            }else {
+                DatabaseMetaData databaseMetaData = DbFactory.Open(dbname).getConnection().getMetaData();
+                //获取所有表
+                ResultSet rs = databaseMetaData.getColumns(null, "%", tablename, "%");
+                list = convertList(rs);
+                rs.close();
+            }
 
             Map paramMap = new HashMap();
             paramMap.put("dbtype_id", dbType);
@@ -191,12 +239,12 @@ public class TaosService {
 
                 for (int i = 0; i < list.size(); i++) {
                     Map resm = list.get(i);
-                    String tabtype = resm.get("TYPE_NAME").toString();
-                    String columnname = resm.get("COLUMN_NAME").toString();
-                    String remarks = resm.get("REMARKS").toString();
-                    String column_length = resm.get("COLUMN_SIZE").toString();
+                    String tabtype = resm.get("TYPE_NAME")==null?null:resm.get("TYPE_NAME").toString();
+                    String columnname = resm.get("COLUMN_NAME")==null?null:resm.get("COLUMN_NAME").toString();
+                    String remarks = resm.get("REMARKS")==null?null:resm.get("REMARKS").toString();
+                    String column_length = resm.get("COLUMN_SIZE")==null?null:resm.get("COLUMN_SIZE").toString();
                     String column_decimal = resm.get("DECIMAL_DIGITS")==null?null:resm.get("DECIMAL_DIGITS").toString();
-                    String column_isnull = resm.get("IS_NULLABLE").toString();
+                    String column_isnull = resm.get("IS_NULLABLE")==null?null:resm.get("IS_NULLABLE").toString();
                     Map mapVal = new HashMap();
                     mapVal.put("id", null);
                     mapVal.put("table_id", tableId);
@@ -255,12 +303,12 @@ public class TaosService {
                 tablemap=paramMap;
                 for (int i = 0; i < list.size(); i++) {
                     Map resm = list.get(i);
-                    String tabtype = resm.get("TYPE_NAME").toString();
-                    String columnname = resm.get("COLUMN_NAME").toString();
-                    String remarks = resm.get("REMARKS").toString();
-                    String column_length = resm.get("COLUMN_SIZE").toString();
+                    String tabtype = resm.get("TYPE_NAME")==null?null:resm.get("TYPE_NAME").toString();
+                    String columnname = resm.get("COLUMN_NAME")==null?null:resm.get("COLUMN_NAME").toString();
+                    String remarks = resm.get("REMARKS")==null?null:resm.get("REMARKS").toString();
+                    String column_length = resm.get("COLUMN_SIZE")==null?null:resm.get("COLUMN_SIZE").toString();
                     String column_decimal = resm.get("DECIMAL_DIGITS")==null?null:resm.get("DECIMAL_DIGITS").toString();
-                    String column_isnull = resm.get("IS_NULLABLE").toString();
+                    String column_isnull = resm.get("IS_NULLABLE")==null?null:resm.get("IS_NULLABLE").toString();
                     Map mapVal = new HashMap();
                     mapVal.put("id", colId);
                     mapVal.put("table_id", tableId);
