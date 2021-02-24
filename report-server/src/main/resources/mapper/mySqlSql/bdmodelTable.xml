@@ -90,4 +90,11 @@
 		</if>
 	</select>
 
+
+	<!-- 修改 bd_model表的信息 -->
+	<update id="updateBdTableByAsset" parameterType="Map">
+		update bd_table set table_title='${table_title}',catalog_id='${catalog_id}'
+		where table_id='${table_id}'
+	</update>
+
 </mapper>

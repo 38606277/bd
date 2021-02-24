@@ -586,4 +586,23 @@ public class ModelTableService {
         Map columnMap = DbFactory.Open(DbFactory.FORM).selectOne("bdTableColumn.getBdTableColumnById",Integer.parseInt(pJson.getString("id")));
         return columnMap;
     }
+
+    public String saveOrUpdateTableColumn(SqlSession sqlSession, JSONObject jsonObject) {
+        Map<String,Object> map  = new HashMap<>();
+        String id=jsonObject.getString("table_id");
+        map.put("table_id",jsonObject.getString("table_id"));
+        map.put("table_title",jsonObject.getString("table_title"));
+        map.put("table_name",jsonObject.getString("table_name"));
+        map.put("catalog_id",jsonObject.getString("catalog_id"));
+        sqlSession.update("bdmodelTable.updateBdTableByAsset",map);
+        JSONArray addLine = jsonObject.getJSONArray("lineForm");
+        for(int i=0;i<addLine.size();i++){
+            JSONObject jsonObjectVal = addLine.getJSONObject(i);
+            Map<String,Object> colmap  = new HashMap<>();
+            colmap.put("id",jsonObjectVal.getString("id"));
+            colmap.put("column_title",jsonObjectVal.getString("column_title"));
+            sqlSession.update("bdTableColumn.updateColumnByAsset",colmap);
+        }
+        return id;
+    }
 }

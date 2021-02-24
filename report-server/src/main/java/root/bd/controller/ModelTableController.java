@@ -142,4 +142,20 @@ public class ModelTableController extends RO {
 
     }
 
+    @RequestMapping(value = "/table/updateTableAndColumn", produces = "text/plain;charset=UTF-8")
+    public String saveOrUpdateTableColumn(@RequestBody JSONObject pJson) throws SQLException {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            String id  = this.modelTableService.saveOrUpdateTableColumn(sqlSession,pJson);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("保存成功",id);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
+
+    }
+
 }
