@@ -73,7 +73,7 @@ public class ModelTableService {
         map.put("table_id", jsonObject.getString("table_id"));
         Integer count = Integer.parseInt(sqlSession.selectOne("bdmodelTable.countTable",map));
         if(count==0) {
-            map.put("table_title",jsonObject.getString("table_title"));//注释
+            map.put("table_desc",jsonObject.getString("table_desc"));//注释
 
             map.put("dbtype_id",jsonObject.getString("dbtype_id"));//注释
             map.put("source_id",jsonObject.getString("source_id"));//注释
@@ -591,7 +591,7 @@ public class ModelTableService {
         Map<String,Object> map  = new HashMap<>();
         String id=jsonObject.getString("table_id");
         map.put("table_id",jsonObject.getString("table_id"));
-        map.put("table_title",jsonObject.getString("table_title"));
+        map.put("table_desc",jsonObject.getString("table_desc"));
         map.put("table_name",jsonObject.getString("table_name"));
         map.put("catalog_id",jsonObject.getString("catalog_id"));
         sqlSession.update("bdmodelTable.updateBdTableByAsset",map);
