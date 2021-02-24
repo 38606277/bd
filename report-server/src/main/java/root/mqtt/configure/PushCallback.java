@@ -140,6 +140,8 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                 log.info("接收消息内容组装插入SQL :" + insertSql);
                 // mqttTaskService.inserSql(dbname,insertSql);
                 sqlSession.update("mqtttask.insertSql", insertSql);
+                /***************同时向 hive 保存一份 数据*************/
+                DbFactory.Open("hive").update("mqtttask.insertSql", insertSql);
                 //this.publish("TEST_PPP",insertSql);
                 /*MqttMessage messagess = new MqttMessage();
                 messagess.setQos(0);

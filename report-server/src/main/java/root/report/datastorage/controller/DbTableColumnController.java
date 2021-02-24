@@ -37,6 +37,18 @@ public class DbTableColumnController extends RO {
         }
     }
 
+    @RequestMapping(value = "/getTableListString", produces = "text/plain;charset=UTF-8")
+    public String getTableListString(@RequestBody JSONObject pJson)  {
+        try {
+            Map<String,Object> map=new HashMap();
+
+            List resultMap = taosService.getTableListString(pJson);
+            return SuccessMsg("", resultMap);
+        } catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+
     @RequestMapping(value = "/getTableCloumnList", produces = "text/plain;charset=UTF-8")
     public String getTableCloumnList(@RequestBody JSONObject pJson)  {
         try {

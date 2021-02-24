@@ -138,6 +138,30 @@ public class TaosService {
         return tableNameList;
     }
 
+    public List<String>  getTableListString(JSONObject pJson) throws SQLException {
+        String fromdb=pJson.getString("fromdb");
+        // 查询数据库所有表
+       /* DatabaseMetaData databaseMetaData = DbFactory.Open(fromdb).getConnection().getMetaData();
+        //获取所有表
+        ResultSet tableSet = databaseMetaData.getTables(null, "%", "%", new String[]{"TABLE"});
+        List<Map> listone = convertList(tableSet);
+        while (tableSet.next()){
+            System.out.println(tableSet.getString(0));
+        }
+        tableSet.close();*/
+
+        Statement stmt=DbFactory.Open(fromdb).getConnection().createStatement();
+        String sql="show tables";
+        ResultSet  res = stmt.executeQuery(sql);
+        List<String> tableNameList= new ArrayList<>();
+        while (res.next()){
+            System.out.println(res.getString(1));
+            tableNameList.add(res.getString(1));
+        }
+        stmt.close();
+        return tableNameList;
+    }
+
     public Map getTableCloumnList(JSONObject pJson)  {
         List<Map> list =new ArrayList<>();
         List<Map> columnList = new ArrayList<>();
