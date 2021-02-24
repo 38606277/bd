@@ -73,30 +73,41 @@ public class DataAsset extends RO {
             Long totalSize = 0L;
             SqlSession sqlSession = DbFactory.Open(pJson.getString("host_id"));
             List<Map<String, Object>> resultList =new ArrayList<>();
-            resultList = sqlSession.selectList("dataAsset.getValueByHostAndTable", pam);
+            RowBounds bounds = null;
+            Integer startIndex = 0,perPage = 10;
+            if (pJson == null) {
+                bounds = RowBounds.DEFAULT;
+            } else {
+                startIndex = Integer.parseInt(pJson.getString("startIndex"));
+                perPage = Integer.parseInt(pJson.getString("perPage"));
+                if (startIndex == 1 || startIndex == 0) {
+                    startIndex = 0;
+                } else {
+                    startIndex = (startIndex - 1) * perPage;
+                }
+                bounds = new PageRowBounds(startIndex, perPage);
+            }
 
             if (pJson.getString("dbtype_id").equals("hive")) {
+                resultList = sqlSession.selectList("dataAsset.getValueByHostAndTable", pam);
                 List<Map> hivelist = new ArrayList<Map>();
                 for (Map aRow : resultList) {
-
                     Map aObject = (Map) aRow.get(pJson.getString("table_name"));
                     hivelist.add(aObject);
                 }
                 map1.put("list", hivelist);
-            } else {
-                RowBounds bounds = null;
-                if (pJson == null) {
-                    bounds = RowBounds.DEFAULT;
-                } else {
-                    Integer startIndex = Integer.parseInt(pJson.getString("startIndex"));
-                    Integer perPage = Integer.parseInt(pJson.getString("perPage"));
-                    if (startIndex == 1 || startIndex == 0) {
-                        startIndex = 0;
-                    } else {
-                        startIndex = (startIndex - 1) * perPage;
-                    }
-                    bounds = new PageRowBounds(startIndex, perPage);
+            } else if(pJson.getString("dbtype_id").equals("taos")){
+                try {
+                    String sql="SELECT * FROM "+pJson.getString("table_name")+" limit "+startIndex+","+perPage;
+                    String sqlcount="SELECT count(*) FROM "+pJson.getString("table_name");
+                    resultList = sqlSession.selectList("dataAsset.getValueByHostAndTablePage", sql);
+                    totalSize = sqlSession.selectOne("dataAsset.getValueByHostAndTableCount", sqlcount);
+                    map1.put("list", resultList);
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
+            } else {
                 resultList = sqlSession.selectList("dataAsset.getValueByHostAndTable", pam, bounds);
 
                 if (pJson != null && pJson.size() != 0) {

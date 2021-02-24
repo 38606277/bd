@@ -130,6 +130,12 @@
 		SELECT * FROM `${table_name}`
 	</select>
 
+	<select id="getValueByHostAndTablePage" parameterType="String" resultType="Map">
+		${_parameter}
+	</select>
+	<select id="getValueByHostAndTableCount" parameterType="String" resultType="java.lang.Long">
+		${_parameter}
+	</select>
 
 
 
