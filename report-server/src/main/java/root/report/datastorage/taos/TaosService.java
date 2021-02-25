@@ -1,5 +1,6 @@
 package root.report.datastorage.taos;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
@@ -138,18 +139,11 @@ public class TaosService {
         return tableNameList;
     }
 
+    /**
+     * 只返回List<String> 表名
+     * */
     public List<String>  getTableListString(JSONObject pJson) throws SQLException {
         String fromdb=pJson.getString("fromdb");
-        // 查询数据库所有表
-       /* DatabaseMetaData databaseMetaData = DbFactory.Open(fromdb).getConnection().getMetaData();
-        //获取所有表
-        ResultSet tableSet = databaseMetaData.getTables(null, "%", "%", new String[]{"TABLE"});
-        List<Map> listone = convertList(tableSet);
-        while (tableSet.next()){
-            System.out.println(tableSet.getString(0));
-        }
-        tableSet.close();*/
-
         Statement stmt=DbFactory.Open(fromdb).getConnection().createStatement();
         String sql="show tables";
         ResultSet  res = stmt.executeQuery(sql);
@@ -157,6 +151,28 @@ public class TaosService {
         while (res.next()){
             System.out.println(res.getString(1));
             tableNameList.add(res.getString(1));
+        }
+        stmt.close();
+        return tableNameList;
+    }
+
+    /**
+     * 只返回List<Map> 表名
+     * */
+    public List<Map>  getTableListMap(JSONObject pJson) throws SQLException {
+        String fromdb=pJson.getString("host_id");
+        String dbType=pJson.getString("dbType");
+        Statement stmt=DbFactory.Open(fromdb).getConnection().createStatement();
+        String sql="show tables";
+        ResultSet  res = stmt.executeQuery(sql);
+        List<Map> tableNameList= new ArrayList<>();
+        while (res.next()){
+            System.out.println(res.getString(1));
+            Map paramMap = new HashMap();
+            paramMap.put("dbtype_id", dbType);
+            paramMap.put("host_id", fromdb);
+            paramMap.put("table_name",res.getString(1));
+            tableNameList.add(paramMap);
         }
         stmt.close();
         return tableNameList;
@@ -353,6 +369,25 @@ public class TaosService {
             }
         }
         resultList = new ArrayList<Map>(result);
+        return resultList;
+    }
+
+    public List getTableListUpdateMap(JSONObject pJson) {
+        JSONArray list= pJson.getJSONArray("list");
+        List<Map> resultList = new ArrayList<Map>();
+        for(int i=0;i<list.size();i++){
+            JSONObject jsonObject = list.getJSONObject(i);
+            Map map= new HashMap();
+            map.put("dbtype_id",jsonObject.getString("dbtype_id").toLowerCase());
+            map.put("host_id",jsonObject.getString("host_id"));
+            map.put("table_name",jsonObject.getString("table_name"));
+            Map mapss= DbFactory.Open(DbFactory.FORM).selectOne("bdmodelTable.findTableByDbAndTablename",map);
+            if(null!=mapss){
+                resultList.add(mapss);
+            }else {
+                resultList.add(map);
+            }
+        }
         return resultList;
     }
 }

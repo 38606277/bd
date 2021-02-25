@@ -49,11 +49,35 @@ public class DbTableColumnController extends RO {
         }
     }
 
+    @RequestMapping(value = "/getTableListMap", produces = "text/plain;charset=UTF-8")
+    public String getTableListMap(@RequestBody JSONObject pJson)  {
+        try {
+            Map<String,Object> map=new HashMap();
+
+            List resultMap = taosService.getTableListMap(pJson);
+            return SuccessMsg("", resultMap);
+        } catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+
     @RequestMapping(value = "/getTableCloumnList", produces = "text/plain;charset=UTF-8")
     public String getTableCloumnList(@RequestBody JSONObject pJson)  {
         try {
             Map<String,Object> map=new HashMap();
             Map resultMap = taosService.getTableCloumnList(pJson);
+            return SuccessMsg("", resultMap);
+        } catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/getTableListUpdateMap", produces = "text/plain;charset=UTF-8")
+    public String getTableListUpdateMap(@RequestBody JSONObject pJson)  {
+        try {
+            Map<String,Object> map=new HashMap();
+
+            List resultMap = taosService.getTableListUpdateMap(pJson);
             return SuccessMsg("", resultMap);
         } catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
