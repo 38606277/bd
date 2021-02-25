@@ -145,12 +145,12 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                 log.info("接收消息内容组装插入SQL :" + insertSql);
                 // mqttTaskService.inserSql(dbname,insertSql);
                 /**保存到Taos数据库的时候需要使用 JDBC方式 */
-                DbFactory.Open(dbname).getConnection().createStatement().execute(insertSql);
-                log.info("执行插入插入SQL 结束。" );
+               // DbFactory.Open(dbname).getConnection().createStatement().execute(insertSql);
+                //log.info("执行插入插入SQL 结束。" );
                 //sqlSession.update("mqtttask.insertSql", insertSql);
                 /***************同时向 hive 保存一份 数据*************/
                // DbFactory.Open(dbname).update("mqtttask.insertSql", insertSql);
-                DbFactory.Open("hive").update("mqtttask.insertSql", insertSql);
+                DbFactory.Open(dbname).update("mqtttask.insertSql", insertSql);
 
 
                 //this.publish("TEST_PPP",insertSql);
