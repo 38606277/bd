@@ -105,19 +105,24 @@ public class SelectSqlService {
         return DbFactory.Open(DbFactory.FORM).selectOne("selectSql.getSelectSqlById",m);
     }
 
-    public Map<String, Object> excueBatchSql(String sql,String fromdb) {
+    public Map<String, Object> excueBatchSql(JSONObject jsonFunc) {
         List<Map<String, Object>> list=null;
         Map<String,Object> resmap  = new HashMap<>();
         resmap.put("result",true);
         resmap.put("info","查询成功");
         resmap.put("data",list);
         try {
-            if(fromdb.equalsIgnoreCase("dpass_data")){
-                DbFactory.Open(fromdb).getConnection().createStatement().execute(sql);
-//                ResultSet resultSet =  DbFactory.Open(fromdb).getConnection().createStatement().executeQuery(sql);
-//                list = convertList(resultSet);
+            String selectsql = jsonFunc.getString("selectsql");
+            String fromdb = jsonFunc.getString("fromdb");
+            String dbtype = jsonFunc.getString("dbtype");
+            String action = jsonFunc.getString("action");
+            if(dbtype.equalsIgnoreCase("taos") && action.equalsIgnoreCase("insert")){
+                DbFactory.Open(fromdb).getConnection().createStatement().execute(selectsql);
+            }else if(dbtype.equalsIgnoreCase("taos") && action.equalsIgnoreCase("find")){
+                ResultSet resultSet =  DbFactory.Open(fromdb).getConnection().createStatement().executeQuery(selectsql);
+                list = convertList(resultSet);
             }else {
-                list = DbFactory.Open(fromdb).selectList("selectSql.tempSql", sql);
+                list = DbFactory.Open(fromdb).selectList("selectSql.tempSql", selectsql);
             }
             resmap.put("data",list);
         }catch (PersistenceException e){

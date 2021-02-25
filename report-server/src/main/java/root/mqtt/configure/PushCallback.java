@@ -6,6 +6,8 @@ import org.eclipse.paho.client.mqttv3.*;
 import root.mqtt.service.MqttTaskService;
 import root.report.db.DbFactory;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -123,25 +125,34 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                 SqlSession sqlSession=DbFactory.Open(dbname);
                 for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
                     log.info(entry.getKey() + "=" + entry.getValue());
-                    sb.append("`"+entry.getKey() + "`,");
-                    if(entry.getKey().equals("id")){
+                    sb.append(""+entry.getKey() + ",");
+                  /*  if(entry.getKey().equals("id")){
                         Integer newId = sqlSession.selectOne("mqtttask.getMaxId");
                         newId = newId == null ? 1 : newId;
                         sv.append("'" + newId + "',");
-                    }else if(!entry.getKey().equals("messagetext") && !entry.getKey().equals("message_create_date")){
+                    }*/
+                    if(!entry.getKey().equals("messagetext") && !entry.getKey().equals("message_create_date")){
                         sv.append("'" + entry.getValue() + "',");
                     }
                 }
-                sb.append("`messagetext`,`message_create_date`,");
-                sv.append("'" + message + "',current_timestamp(6),");
+                sb.append("messagetext,message_create_date,");
+                String newdate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS") .format(new Date());
+                log.info("获取当前时间 :" + newdate);
+                sv.append("'" + message + "','"+newdate+"',");
                 String targetTable=paramMap.get("targetTable").toString().trim();
 
-                insertSql = "insert into `"+targetTable+"` (" + sb.deleteCharAt(sb.length() - 1) + ")values(" + sv.deleteCharAt(sv.length() - 1) + ")";
+                insertSql = "insert into "+targetTable+" (" + sb.deleteCharAt(sb.length() - 1) + ")values(" + sv.deleteCharAt(sv.length() - 1) + ")";
                 log.info("接收消息内容组装插入SQL :" + insertSql);
                 // mqttTaskService.inserSql(dbname,insertSql);
-                sqlSession.update("mqtttask.insertSql", insertSql);
+                /**保存到Taos数据库的时候需要使用 JDBC方式 */
+                DbFactory.Open(dbname).getConnection().createStatement().execute(insertSql);
+                log.info("执行插入插入SQL 结束。" );
+                //sqlSession.update("mqtttask.insertSql", insertSql);
                 /***************同时向 hive 保存一份 数据*************/
+               // DbFactory.Open(dbname).update("mqtttask.insertSql", insertSql);
                 DbFactory.Open("hive").update("mqtttask.insertSql", insertSql);
+
+
                 //this.publish("TEST_PPP",insertSql);
                 /*MqttMessage messagess = new MqttMessage();
                 messagess.setQos(0);

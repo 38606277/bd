@@ -96,6 +96,7 @@ public class DataAsset extends RO {
                     hivelist.add(aObject);
                 }
                 map1.put("list", hivelist);
+                totalSize= Long.valueOf(hivelist.size());
             } else if(pJson.getString("dbtype_id").equals("taos")){
                 try {
                     String sql="SELECT * FROM "+pJson.getString("table_name")+" limit "+startIndex+","+perPage;
