@@ -97,4 +97,10 @@
 		where table_id='${table_id}'
 	</update>
 
+	<select id="getHabseTablename" resultType="map">
+		select distinct table_name,'hbase' as 'dbtype_id','hive' as 'host_id'  from SYSTEM."CATALOG" where  1=1 and TABLE_TYPE!='s'
+	</select>
+	<select id="getTablesByDBNameHbase" resultType="Map" parameterType="Map">
+       select distinct TABLE_NAME  from SYSTEM."CATALOG" where  1=1 and TABLE_TYPE!='s'
+    </select>
 </mapper>

@@ -162,19 +162,30 @@ public class TaosService {
     public List<Map>  getTableListMap(JSONObject pJson) throws SQLException {
         String fromdb=pJson.getString("host_id");
         String dbType=pJson.getString("dbType");
-        Statement stmt=DbFactory.Open(fromdb).getConnection().createStatement();
-        String sql="show tables";
-        ResultSet  res = stmt.executeQuery(sql);
         List<Map> tableNameList= new ArrayList<>();
-        while (res.next()){
-            System.out.println(res.getString(1));
-            Map paramMap = new HashMap();
-            paramMap.put("dbtype_id", dbType);
-            paramMap.put("host_id", fromdb);
-            paramMap.put("table_name",res.getString(1));
-            tableNameList.add(paramMap);
+        if(dbType.equalsIgnoreCase("hbase")){
+            tableNameList =  DbFactory.Open(fromdb).selectList("bdmodelTable.getHabseTablename");
+            System.out.println(tableNameList);
+
+//            Map<String,String> map = new HashMap<>();
+//
+//            List<Map> tableNameLisst = DbFactory.Open(fromdb).selectList("bdmodelTable.getTablesByDBNameHbase",map);
+//            System.out.println("===============");
+        }else {
+            Statement stmt = DbFactory.Open(fromdb).getConnection().createStatement();
+            String sql = "show tables";
+            ResultSet res = stmt.executeQuery(sql);
+
+            while (res.next()) {
+                System.out.println(res.getString(1));
+                Map paramMap = new HashMap();
+                paramMap.put("dbtype_id", dbType);
+                paramMap.put("host_id", fromdb);
+                paramMap.put("table_name", res.getString(1));
+                tableNameList.add(paramMap);
+            }
+            stmt.close();
         }
-        stmt.close();
         return tableNameList;
     }
 
