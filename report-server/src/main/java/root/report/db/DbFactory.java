@@ -14,6 +14,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import root.configure.AppConstants;
+import root.report.datastorage.hbase.HbaseMetadataV2;
 import root.report.util.ErpUtil;
 
 import java.io.File;
@@ -41,17 +42,22 @@ public class DbFactory {
             SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
 
             DruidDataSource dataSource = new DruidDataSource();
-            dataSource.setUsername(dbJson.getString("username"));
-            dataSource.setPassword(erpUtil.decode(dbJson.getString("password")));
-            dataSource.setDriverClassName(dbJson.getString("driver"));
-            if ("Mysql".equals(dbtype)) {
-                dataSource.setUrl(dbJson.getString("url")+"?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&autoReconnect=true");
+            if("hbase".equals(dbtype)){
+                HbaseMetadataV2 hbaseMetadataV2 = new HbaseMetadataV2();
+                dataSource =  hbaseMetadataV2.getDataSource(dbJson);
+            }else {
+                dataSource.setUsername(dbJson.getString("username"));
+                dataSource.setPassword(erpUtil.decode(dbJson.getString("password")));
+                dataSource.setDriverClassName(dbJson.getString("driver"));
+                if ("Mysql".equals(dbtype)) {
+                    dataSource.setUrl(dbJson.getString("url") + "?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&autoReconnect=true");
 //                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=Asia/Shanghai&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
 
 
 //                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=Asia/Shanghai&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
-            } else {
-                dataSource.setUrl(dbJson.getString("url"));
+                } else {
+                    dataSource.setUrl(dbJson.getString("url"));
+                }
             }
             dataSource.setMaxWait(10000);//设置连接超时时间10秒
             dataSource.setMaxActive(Integer.valueOf(dbJson.getString("maxPoolSize")));
