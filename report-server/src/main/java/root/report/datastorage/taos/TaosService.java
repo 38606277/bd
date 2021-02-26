@@ -144,15 +144,28 @@ public class TaosService {
      * */
     public List<String>  getTableListString(JSONObject pJson) throws SQLException {
         String fromdb=pJson.getString("fromdb");
-        Statement stmt=DbFactory.Open(fromdb).getConnection().createStatement();
-        String sql="show tables";
-        ResultSet  res = stmt.executeQuery(sql);
-        List<String> tableNameList= new ArrayList<>();
-        while (res.next()){
-            System.out.println(res.getString(1));
-            tableNameList.add(res.getString(1));
+        String dbType = pJson.getString("dbType");
+        List<String> tableNameList = new ArrayList<>();
+
+        if(dbType.equalsIgnoreCase("hbase")){
+            Map<String,String> map = new HashMap<>();
+           List<Map> tableNameListtemp = DbFactory.Open(fromdb).selectList("bdmodelTable.getTablesByDBNameHbase",map);
+            for(int i=0;i<tableNameListtemp.size();i++){
+                Map m=tableNameListtemp.get(i);
+                String tablename = m.get("TABLE_NAME").toString().toLowerCase();
+                tableNameList.add(tablename);
+            }
+            System.out.println("===============");
+        }else {
+            Statement stmt = DbFactory.Open(fromdb).getConnection().createStatement();
+            String sql = "show tables";
+            ResultSet res = stmt.executeQuery(sql);
+            while (res.next()) {
+                System.out.println(res.getString(1));
+                tableNameList.add(res.getString(1));
+            }
+            stmt.close();
         }
-        stmt.close();
         return tableNameList;
     }
 
