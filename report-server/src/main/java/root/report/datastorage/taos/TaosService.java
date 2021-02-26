@@ -144,7 +144,7 @@ public class TaosService {
      * */
     public List<String>  getTableListString(JSONObject pJson) throws SQLException {
         String fromdb=pJson.getString("fromdb");
-        String dbType = pJson.getString("dbType");
+        String dbType = pJson.getString("fromdb");
         List<String> tableNameList = new ArrayList<>();
 
         if(dbType.equalsIgnoreCase("hbase")){
@@ -161,7 +161,6 @@ public class TaosService {
             String sql = "show tables";
             ResultSet res = stmt.executeQuery(sql);
             while (res.next()) {
-                System.out.println(res.getString(1));
                 tableNameList.add(res.getString(1));
             }
             stmt.close();
