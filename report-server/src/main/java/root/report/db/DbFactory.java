@@ -52,8 +52,6 @@ public class DbFactory {
                 if ("Mysql".equals(dbtype)) {
                     dataSource.setUrl(dbJson.getString("url") + "?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&autoReconnect=true");
 //                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=Asia/Shanghai&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
-
-
 //                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=Asia/Shanghai&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
                 } else {
                     dataSource.setUrl(dbJson.getString("url"));

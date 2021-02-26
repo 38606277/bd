@@ -97,6 +97,15 @@ public class DataAsset extends RO {
                 }
                 map1.put("list", hivelist);
                 totalSize= Long.valueOf(hivelist.size());
+            }else if(pJson.getString("dbtype_id").equals("hbase")) {
+                resultList = sqlSession.selectList("dataAsset.getValueByHostAndTableHbase", pam, bounds);
+
+                if (pJson != null && pJson.size() != 0) {
+                    totalSize = ((PageRowBounds) bounds).getTotal();
+                } else {
+                    totalSize = Long.valueOf(resultList.size());
+                }
+                map1.put("list", resultList);
             } else if(pJson.getString("dbtype_id").equals("taos")){
                 try {
                     String sql="SELECT * FROM "+pJson.getString("table_name")+" limit "+startIndex+","+perPage;

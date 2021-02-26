@@ -164,13 +164,21 @@ public class TaosService {
         String dbType=pJson.getString("dbType");
         List<Map> tableNameList= new ArrayList<>();
         if(dbType.equalsIgnoreCase("hbase")){
-            tableNameList =  DbFactory.Open(fromdb).selectList("bdmodelTable.getHabseTablename");
-            System.out.println(tableNameList);
+         //   tableNameList =  DbFactory.Open(fromdb).selectList("bdmodelTable.getHabseTablename");
+            //System.out.println(tableNameList);
 
-//            Map<String,String> map = new HashMap<>();
-//
-//            List<Map> tableNameLisst = DbFactory.Open(fromdb).selectList("bdmodelTable.getTablesByDBNameHbase",map);
-//            System.out.println("===============");
+            Map<String,String> map = new HashMap<>();
+
+            tableNameList = DbFactory.Open(fromdb).selectList("bdmodelTable.getTablesByDBNameHbase",map);
+            for(int i=0;i<tableNameList.size();i++){
+                Map m=tableNameList.get(i);
+                String tablename = m.get("TABLE_NAME").toString().toLowerCase();
+                m.put("dbtype_id", dbType);
+                m.put("host_id", fromdb);
+                m.put("table_name",tablename);
+
+            }
+            System.out.println("===============");
         }else {
             Statement stmt = DbFactory.Open(fromdb).getConnection().createStatement();
             String sql = "show tables";
