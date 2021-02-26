@@ -88,7 +88,7 @@ public class DataAsset extends RO {
                 bounds = new PageRowBounds(startIndex, perPage);
             }
 
-            if (pJson.getString("dbtype_id").equals("hive")) {
+            if (pJson.getString("dbtype_id").equalsIgnoreCase("hive")) {
                 resultList = sqlSession.selectList("dataAsset.getValueByHostAndTable", pam);
                 List<Map> hivelist = new ArrayList<Map>();
                 for (Map aRow : resultList) {
@@ -97,7 +97,7 @@ public class DataAsset extends RO {
                 }
                 map1.put("list", hivelist);
                 totalSize= Long.valueOf(hivelist.size());
-            }else if(pJson.getString("dbtype_id").equals("hbase")) {
+            }else if(pJson.getString("dbtype_id").equalsIgnoreCase("hbase")) {
                 resultList = sqlSession.selectList("dataAsset.getValueByHostAndTableHbase", pam, bounds);
 
                 if (pJson != null && pJson.size() != 0) {
@@ -106,7 +106,7 @@ public class DataAsset extends RO {
                     totalSize = Long.valueOf(resultList.size());
                 }
                 map1.put("list", resultList);
-            } else if(pJson.getString("dbtype_id").equals("taos")){
+            } else if(pJson.getString("dbtype_id").equalsIgnoreCase("taos")){
                 try {
                     String sql="SELECT * FROM "+pJson.getString("table_name")+" limit "+startIndex+","+perPage;
                     String sqlcount="SELECT count(*) FROM "+pJson.getString("table_name");

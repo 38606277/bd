@@ -135,10 +135,10 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                         sv.append("'" + entry.getValue() + "',");
                     }
                 }
-                sb.append("messagetext,message_create_date,");
+//                sb.append("messagetext,message_create_date,");
                 String newdate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS") .format(new Date());
                 log.info("获取当前时间 :" + newdate);
-                sv.append("'" + message + "','"+newdate+"',");
+               // sv.append("'" + message + "','"+newdate+"',");
                 String targetTable=paramMap.get("targetTable").toString().trim();
 
                 insertSql = "insert into "+targetTable+" (" + sb.deleteCharAt(sb.length() - 1) + ")values(" + sv.deleteCharAt(sv.length() - 1) + ")";
