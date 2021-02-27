@@ -108,24 +108,19 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         log.info("接收消息主题 : " + topic);
         log.info("接收消息message : " + message);
-        String pJson = null;
-        byte[] payload=message.getPayload();
         try {
+            String pJson = null;
+            byte[] payload=message.getPayload();
             pJson = new String(payload,"UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        JSONObject jsonObject=JSONObject.parseObject(pJson);
-        if(null!=jsonObject) {
-            try {
+            JSONObject jsonObject=JSONObject.parseObject(pJson);
+            if(null!=jsonObject) {
                 StringBuilder sb = new StringBuilder();
                 StringBuilder sv = new StringBuilder();
                 String insertSql="";
                 String dbname = paramMap.get("targetDB").toString().trim();
                 SqlSession sqlSession=DbFactory.Open(dbname);
                 for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
-                    log.info(entry.getKey() + "=" + entry.getValue());
-                    sb.append(""+entry.getKey() + ",");
+                    sb.append(""+entry.getKey().toLowerCase() + ",");
                   /*  if(entry.getKey().equals("id")){
                         Integer newId = sqlSession.selectOne("mqtttask.getMaxId");
                         newId = newId == null ? 1 : newId;
@@ -135,10 +130,9 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                         sv.append("'" + entry.getValue() + "',");
                     }
                 }
-//                sb.append("messagetext,message_create_date,");
+                sb.append("messagetext,message_create_date,");
                 String newdate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS") .format(new Date());
-                log.info("获取当前时间 :" + newdate);
-               // sv.append("'" + message + "','"+newdate+"',");
+                sv.append("'" + message + "','"+newdate+"',");
                 String targetTable=paramMap.get("targetTable").toString().trim();
 
                 insertSql = "insert into "+targetTable+" (" + sb.deleteCharAt(sb.length() - 1) + ")values(" + sv.deleteCharAt(sv.length() - 1) + ")";
@@ -146,22 +140,16 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                 // mqttTaskService.inserSql(dbname,insertSql);
                 /**保存到Taos数据库的时候需要使用 JDBC方式 */
                // DbFactory.Open(dbname).getConnection().createStatement().execute(insertSql);
-                //log.info("执行插入插入SQL 结束。" );
+
                 //sqlSession.update("mqtttask.insertSql", insertSql);
                 /***************同时向 hive 保存一份 数据*************/
-               // DbFactory.Open(dbname).update("mqtttask.insertSql", insertSql);
-                DbFactory.Open(dbname).update("mqtttask.insertSql", insertSql);
+                sqlSession.update("mqtttask.insertSql", insertSql);
 
-
-                //this.publish("TEST_PPP",insertSql);
-                /*MqttMessage messagess = new MqttMessage();
-                messagess.setQos(0);
-                messagess.setRetained(false);
-                messagess.setPayload(insertSql.getBytes());
-                client.publish("NEWTEST",messagess);*/
-            }catch (Exception e){
-                e.printStackTrace();
             }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
