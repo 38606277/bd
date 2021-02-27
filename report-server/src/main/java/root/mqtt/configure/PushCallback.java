@@ -120,6 +120,7 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                 String dbname = paramMap.get("targetDB").toString().trim();
                 SqlSession sqlSession=DbFactory.Open(dbname);
                 for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+                    log.info("接收消息内容 :" + entry.getKey().toLowerCase()+"="+entry.getValue());
                     sb.append(""+entry.getKey().toLowerCase() + ",");
                   /*  if(entry.getKey().equals("id")){
                         Integer newId = sqlSession.selectOne("mqtttask.getMaxId");
@@ -143,7 +144,7 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
 
                 //sqlSession.update("mqtttask.insertSql", insertSql);
                 /***************同时向 hive 保存一份 数据*************/
-                sqlSession.update("mqtttask.insertSql", insertSql);
+                sqlSession.insert("mqtttask.insertMqttSql", insertSql);
 
             }
         } catch (UnsupportedEncodingException e) {

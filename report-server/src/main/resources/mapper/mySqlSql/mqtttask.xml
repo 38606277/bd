@@ -73,6 +73,10 @@
         ${_parameter}
     </update>
 
+	<insert id="insertMqttSql" parameterType="string">
+        ${_parameter}
+    </insert>
+
 	<select id="tempSql" parameterType="String" resultType="map">
 		${_parameter}
 	</select>
